@@ -1,0 +1,285 @@
+{% extends 'enSentiment/base.html' %}
+{% load static %}
+{% block content%}
+<div class="row justify-content-center mb-5">
+    <h1 class="text-center"> <strong> ANALYZE SENTIMENT </strong></h1>
+    </div>
+                        <div class="row align-items-center justify-content-center">
+                            <div class="col-8 col-lg-5 col-xl-4">
+                                <div class="card border-2">
+                                    <div class="card-body text-center">
+                                        <!-- Analysis Sentiment form in card -->
+                                      <form id="analyze_options"  class="needs-validation" method="post" novalidate>
+                                          {% csrf_token %}
+                                            <label for="SelectKeyWord">Select a vaccine</label>
+                                            <select class="selectpicker"name="SelectKeyword" id="SelectKeyWord" required>  <!-- data-live-search="true" -->
+                                                <option selected value="All vaccines">All vaccines</option>
+                                                <option value="Pfizer-BioNTech">Pfizer-BioNTech</option>
+                                                <option value="Moderna">Moderna</option>
+                                                <option value="Johnson & Johnson’s Janssen">Johnson & Johnson’s Janssen</option>
+                                                <option value="Oxford-AstraZeneca">Oxford-AstraZeneca</option>
+                                                <option value="Novavax">Novavax</option>
+                                            </select>
+            
+                                            <!-- Date Picker -->
+                                            <div class="form-row mt-3 mb-3">
+                                                <div class="col-6">
+                                                <label for="FromDate">From</label>
+                                                <div class="input-group date">
+                                                    <!-- name="datetimepicker5" -->
+                                                    <input type="text" id="datetimepicker1" class="form-control" name="FromDate" readonly>
+                                                    <div class="invalid-feedback">
+                                                        Please choose a Date.
+                                                      </div>
+                                                <div class="input-group-addon input-group-prepend">
+                                                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                                </div>
+                                                </div>
+                                                </div>
+
+                                                <div class="col-6">
+                                                    <label for="ToDate">To</label>
+                                                    <div class="input-group date">
+                                                        <input type="text" id="datetimepicker2" class="form-control" name="ToDate" readonly>
+                                                    <div class="input-group-addon input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                            </div>
+
+                                            <!-- # Tweets -->
+                                            <div class="form-group">
+                                                <label for="NofTweets">Number of tweets</label>
+                                                  <input type="text" class="form-control" name="" id="NofTweets" placeholder="Approx.">
+                                                  <div id='numERROR' class="invalid-feedback has-error-numeric" style="display: None"></div>
+                                              </div>
+
+                                              <!-- if user logged in checkbox with send email question will appeare -->
+                                              {% if user.is_authenticated %}
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"  name="sendME" id="sendME" value="">
+                                                    <label class="form-check-label" for="sendME">Send mail when the analysis is finished?</label>
+                                                </div>
+                                              {%endif%}
+
+                                                <button class="btn btn-primary mt-3" type="submit" id="submit_info">Analyze</button>  
+                                      </form>
+
+                                    </div>
+                                  </div>
+                            </div>
+                        </div>  
+                        
+                        <!-- Lodaing Modal -->
+                        <div class="modal" id="loaderModal">
+                            <div class="modal-dialog modal-dialog-centered">
+                            <div id='modalconent' class="modal-content">
+  
+                                <!-- Modal body -->
+                                <div class="modal-body text-center">
+                                    <div id="loader">
+                                        <img src="{% static 'assets/images/circ_load.svg' %}">
+                                    </div>
+                                    <h3>ANALYSING...</h3>
+                                    <h6 id="WaitText"></h6>
+                                </div>
+          
+                            </div>
+                            </div>
+                        </div>
+{% endblock %}
+
+{% block endScript %}
+<!-- This Script to make sure tweets number grater than the diffrance between dates and disable the submit btn if input is less than diff -->
+<script>
+    
+    $('#NofTweets').change(function(){
+
+        if ($('#NofTweets').hasClass('form-control is-invalid'))
+        {
+            $('#submit_info').prop('disabled', true);
+        }
+        else{
+            $('#submit_info').prop('disabled', false);
+        }
+
+        FromDate=new Date($("input[name='FromDate']").val());
+        ToDate=new Date($("input[name='ToDate']").val());
+        daydiff= ((ToDate - FromDate)/(1000 * 60 * 60 * 24))+1;
+        numOftweets= $('#NofTweets').val()
+        if((daydiff<0))
+        {
+            $('#NofTweets').addClass(" is-invalid");
+            $("#numERROR").css("display", "inline-block");
+            errorTXT='Make sure your date input is correct, "From" input must be less than "To" input.';
+            $("#numERROR").text(errorTXT);
+            $('#submit_info').prop('disabled', true);     
+        }
+        else if((numOftweets < daydiff))
+        {
+            $('#NofTweets').addClass(" is-invalid");
+            $("#numERROR").css("display", "inline-block");
+            errorTXT='Number of tweest must be greater than ('+(daydiff-1)+').';
+            $("#numERROR").text(errorTXT);
+            $('#submit_info').prop('disabled', true);
+        }
+        else
+        {
+            $("#numERROR").css("display", "None");
+            $('#NofTweets').removeClass(" is-invalid");
+            $('#submit_info').prop('disabled', false);
+        }
+
+        if((numOftweets>3500))
+        {
+            $('#NofTweets').addClass(" is-invalid");
+            $("#numERROR").css("display", "inline-block");
+            errorTXT='Number of tweest must be less than (3500).';
+            $("#numERROR").text(errorTXT);
+            $('#submit_info').prop('disabled', true);
+        }
+    })
+</script>
+<!-- This script to analyzing user options using ajax and check if all inputs is already entered correctly  -->
+<script>
+    $('#analyze_options').submit(function(e){
+        e.preventDefault();
+
+        SelectKeyWord=$('#SelectKeyWord').val();
+        FromData=$("input[name='FromDate']").val();
+        ToDate=$("input[name='ToDate']").val();
+        NofTweets=$('#NofTweets').val();
+        daydiff=((new Date(ToDate) - new Date(FromDate))/(1000 * 60 * 60 * 24))+1
+    if(NofTweets && daydiff>0)
+    {
+            sendEmail=undefined;
+            if(document.getElementById('sendME')){
+                if(document.getElementById('sendME').checked){
+                    sendEmail='yes';
+                }
+            }
+        $.ajax(
+        {
+            type:"POST",
+            url: "{% url 'enSentiment:getAnalysis' %}",
+            data:{
+                SelectKeyWord:SelectKeyWord,
+                FromData:FromData,
+                ToDate:ToDate,
+                tweetsNum:NofTweets,
+                sendEmail:sendEmail,
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            //before send the ajax request will let the user know about the analysis time in loadeing modal
+            beforeSend: function()
+            {
+                daydiff= (new Date($("input[name='ToDate']").val()) - new Date($("input[name='FromDate']").val()))/(1000 * 60 * 60 * 24);
+                twtNUM=$('#NofTweets').val();
+
+                waitngTime=((((twtNUM*0.05)+daydiff)+ twtNUM*0.005882)/60).toFixed(2);
+                waitngTime=Math.ceil(waitngTime);
+
+                waitText='May take '+waitngTime.toString()+' Mins. be patient';
+                $("#WaitText").text(waitText);
+
+                $('#submit_info').prop('disabled', true);
+                $('#loaderModal').modal('show');
+            },
+            complete: function()
+            {
+                $('#loaderModal').modal('hide');
+            },
+            success: function(data) 
+            {
+                if(data['state']==true)
+                {
+                    //alert("done");
+                    location.href = "{% url 'enSentiment:result' %}";
+                }
+                elseif(data['state']==false)
+                {
+                    $('#loaderModal').modal('show');
+                    $('#modalcontent').text('Can not grapping data')
+                } 
+            },
+            error: function()
+            {
+                $('#loaderModal').modal('hide');
+                alert("error");
+                
+            }
+        })
+    }
+    else if(daydiff<0){
+        $('#NofTweets').addClass(" is-invalid");
+        $("#numERROR").css("display", "inline-block");
+        errorTXT='Make sure your date input is correct, "From" input must be less than "To" input.';
+        $("#numERROR").text(errorTXT);
+        $('#submit_info').prop('disabled', true);
+    }
+    else{
+        $('#NofTweets').addClass(" is-invalid");
+        $("#numERROR").css("display", "inline-block");
+        errorTXT='Number of tweest must be more than 1. \n OR check the \"From\" and \"To\" inputs.';
+        $("#numERROR").text(errorTXT);
+        $('#submit_info').prop('disabled', true);
+    }
+});
+</script>  
+<!-- The next three scripts for create date picker in analysis sentiment form  -->
+<script>
+    $(function () {
+        $.extend(true, $.fn.datetimepicker.defaults, {
+            icons: {
+                time: 'far fa-clock',
+                date: 'far fa-calendar',
+                up: 'fas fa-arrow-up',
+                down: 'fas fa-arrow-down',
+                previous: 'fas fa-chevron-left',
+                next: 'fas fa-chevron-right',
+                today: 'far fa-calendar-check-o',
+                clear: 'far fa-trash',
+                close: 'far fa-times'
+            }
+        });
+    });
+    </script>
+<script>
+    $(function () {
+          var minDate = new Date('January 1, 2020 23:15:30');
+          var maxDate = new Date();
+
+          minDate.setDate(minDate.getDate()); // set days - mean previous date from current date + mean future date from current date
+          maxDate.setDate(maxDate.getDate());
+            $('input[id="datetimepicker1"]').datetimepicker({
+              format: 'YYYY-MM-DD',
+              minDate: minDate,
+              maxDate: maxDate,
+              ignoreReadonly: true
+            });
+        });
+</script>
+
+<script>
+       $(function () {
+          var minDate = new Date('January 1, 2020 23:15:30');
+          var maxDate = new Date();
+
+          minDate.setDate(minDate.getDate()); // set days - mean previous date from current date + mean future date from current date
+          maxDate.setDate(maxDate.getDate());
+            $('input[id="datetimepicker2"]').datetimepicker({
+              format: 'YYYY-MM-DD',
+              minDate: minDate,
+              maxDate: maxDate,
+              ignoreReadonly: true
+            });
+        });
+</script>
+
+<!-- Adding validation script -->
+<script>
+    // Anlaysis Form Validation
+    bootstrapValidate('#NofTweets', 'numeric:Please only enter numeric characters!');
+</script>
+{% endblock %}

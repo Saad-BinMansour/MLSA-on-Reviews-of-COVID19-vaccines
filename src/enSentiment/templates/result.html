@@ -1,0 +1,320 @@
+{% extends 'enSentiment/base.html' %}
+{% load static %}
+
+{% block initscripts %}
+<script src="{% static 'js/anychart-base.min.js' %}"></script>
+<script src="{% static 'js/anychart-tag-cloud.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+{% endblock %}
+
+
+{% block content %}
+    <div id="content">
+        <div class="row justify-content-center mb-8">
+            <h1 class="text-center"> <strong> ANALYSIS RESULT </strong></h1>
+        </div>
+        <div class="row justify-content-center mb-8">
+            <h3 class="text-center"> <strong> Of </strong>{{keyword}}</h3>
+        </div>
+        <div class="row justify-content-center mb-5">
+            <h3 class="text-center"> <strong> From </strong>{{FromDate}} <strong> To </strong>{{ToDate}}</h3>
+        </div>
+        
+                <div class="row justify-content-center" style="width: 100%;">
+                    <!-- Column -->
+                    <div class="col-12">
+                        <!-- Line Chart Card -->
+                        <div class="card">
+                            <div class="card-body">
+
+                                <div class="row justify-content-center"> 
+                                        <h3 class="card-title mb-4 text-center">Line Chart of (<strong>{{num_allTweets}} tweets</strong>)</h3>
+                                </div>
+
+                                <div class="row justify-content-center"> 
+                                    <div style="height: 60vh; width: 100%;">      
+                                        <canvas id="line_chart"></canvas>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <!-- Column -->
+                    <div class="col-lg-8">
+                        <!-- Pie Chart Card -->
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row justify-content-center"> 
+                                    <div>
+                                        <h3 class="card-title mb-0">Pie Chart of (<strong>{{num_allTweets}} tweets</strong>)</h3>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center"> 
+                                    <div class="" id="pie_chart" style="height: 355px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center">
+                {% if num_posTweets > 0 %}
+                    <!-- Column of Positive WordCloud -->
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row justify-content-center"> 
+                                    <div>
+                                        <h3 class="card-title mb-0">WordCloud of (<strong>{{num_posTweets}} positive tweets</strong>)</h3>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center"> 
+                                  <div class="" id="pos_words" style="height: 355px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if num_negTweets > 0 %}
+                    <!-- Column of Negative WordCloud  -->
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row justify-content-center"> 
+                                    <div>
+                                        <h3 class="card-title mb-0">WordCloud of (<strong>{{num_negTweets}} Negative tweets</strong>)</h3>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center"> 
+                                    <div class="" id="neg_words" style="height: 355px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                </div>
+
+
+                <div class="row justify-content-center">
+                {% if top_posDF %}
+                    <!-- Column of TOP Positive tweets -->
+                    <div class="col-lg-6 d-flex align-items-stretch">
+                        <div class="card w-100">
+                            <div class="card-body">
+                                <div class="row justify-content-center"> 
+                                        <h3 class="card-title">Top (<strong>4 Positive tweets</strong>)</h3>
+                                </div>
+                                <div class="row justify-content-center"> 
+                                    <div class="table-responsive">
+                                        <table class="table vm no-th-brd pro-of-month">
+                                            <thead>
+                                                <tr>
+                                                    <th>Tweet</th>
+                                                    <th>Puplished Date</th>
+                                                    <th>Link</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for row in top_posDF %}
+                                                <tr>
+                                                    <td >
+                                                        <h6>{{row.orginalTweet}}</h6>
+                                                    </td>
+                                                    <td>{{row.date}}</td>
+                                                    <td> <a href="{{row.link}}"><button type="button" class="btn btn-primary ml-auto mr-1">
+                                                        OrginalTweet
+                                                        </button></a></td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if top_negDF %}
+                              <!-- Column of TOP Negative tweets  -->
+                            <div class="col-lg-6 d-flex align-items-stretch">
+                                <div class="card w-100">
+                                    <div class="card-body">
+                                        <div class="row justify-content-center"> 
+                                                <h3 class="card-title">Top (<strong>4 Negative tweets</strong>)</h3>
+                                        </div>
+                                        <div class="row justify-content-center"> 
+                                            <div class="table-responsive">
+                                                <table class="table vm no-th-brd pro-of-month">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Tweet</th>
+                                                            <th>Puplished Date</th>
+                                                            <th>Link</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for row in top_negDF%}
+                                                        <tr>
+                                                            <td >
+                                                                <h6>{{row.orginalTweet}}</h6>
+                                                            </td>
+                                                            <td>{{row.date}}</td>                                            
+                                                            <td> <a href="{{row.link}}"><button type="button" class="btn btn-primary ml-auto mr-1">
+                                                                OrginalTweet
+                                                                </button></a></td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                {% endif %}
+                </div>
+    </div>
+
+    <div class="row justify-content-center mt-2">
+        <h4>To Save a summary of Anlaysis result click "To PDF"</h4>
+    </div>
+    <div class="row justify-content-center">
+        <button type="button" id="pdfbtn" onclick="savePDF()" class="btn btn-primary mr-1"><i class="fa fa-file-pdf-o"></i>
+            To PDF
+        </button>
+    </div>
+    <div class="row justify-content-center mt-4">
+        <h4>To see all analysis tweets click "All Tweets"</h4>
+    </div>
+    <div class="row justify-content-center">
+        <a href="/allTweets"><button type="button"  class="btn btn-primary mr-1">
+            All Tweets
+        </button></a>
+    </div>
+            
+
+    <!-- PIE Chart Script -->
+    <script>
+        anychart.onDocumentReady(function () {
+            //data
+            var data ={{ num_ofTweets|safe }}; 
+            
+            // create a chart and set the data
+            var chart = anychart.pie(data);
+        
+            // set the container id
+            chart.container("pie_chart");
+        
+            // initiate drawing the chart
+            chart.draw();
+        });
+    </script>
+
+    <!-- Positive WordCloud Script -->
+    <script>
+        anychart.onDocumentReady(function () {
+        
+            //data
+          var posData = {{ most_posTweets|safe }};
+          var negData = {{ most_negTweets|safe }};
+
+          // create a tag cloud chart
+          var posCloud = anychart.tagCloud(posData);
+          var negCloud = anychart.tagCloud(negData);
+    
+          // set array of angles, by which words will be placed
+          posCloud.angles([0])
+          negCloud.angles([0])
+
+          // set color range length
+          posCloud.colorRange().length('80%');
+          negCloud.colorRange().length('80%');
+        
+          // display chart
+          posCloud.container("pos_words");
+          posCloud.draw();
+          negCloud.container("neg_words");
+          negCloud.draw();
+        });
+    </script>
+
+{% endblock %}
+
+{% block endScript%}
+<script>
+    // setup 
+    const data = {
+      labels: {{datesLabel|safe}},
+      datasets: [{
+        label: 'Positive',
+        data: {{num_posDate|safe}},
+        borderColor: ['rgba(75, 128, 64, 1)'],
+        fill: false,
+        borderWidth: 1.5,
+        tension: 0.3
+      },
+      {
+        label: 'Negative',
+        data: {{num_negDate|safe}},
+        borderColor: ['rgba(168, 62, 52, 1)'],
+        fill: false,
+        borderWidth: 1.5,
+        tension: 0.3
+      }]
+    };
+
+    // config 
+    const config = {
+      type: 'line',
+      data,
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+      }
+    };
+
+    // render init block
+    const myChart = new Chart(
+      document.getElementById('line_chart'),
+      config
+    );
+
+</script>
+<script>
+    window.jsPDF = window.jspdf.jsPDF;
+    window.html2canvas = window.html2canvas
+    function savePDF()
+    {
+
+
+        var content=document.getElementById('content');
+        
+        html2canvas(content,{
+            allowTaint: true,
+            useCORS: true,
+            scale: 1,
+        }).then(canvas => {
+            var img =canvas.toDataURL("image/jpeg");
+            var doc = new jsPDF();
+            const imgProps= doc.getImageProperties(img);
+            const pdfWidth = (imgProps.width * doc.internal.pageSize.getHeight()) / imgProps.height; 
+            const pdfHeight = doc.internal.pageSize.getHeight();
+            doc.addImage(img,'jpeg',20,0,pdfWidth,pdfHeight)
+            doc.save("MyAnalysis_Result.pdf")
+        })
+        
+
+    }
+</script>
+{% endblock %}
