@@ -1,0 +1,89 @@
+{% extends 'enSentiment/base.html' %}
+
+{% block content %}
+{% if user.is_authenticated %}
+                <!-- ============================================================== -->
+                <!-- Start Page Content -->
+                <!-- ============================================================== -->
+
+                <div class="row align-items-center justify-content-center">
+
+                    <div class="col-lg-8 col-xlg-9 col-md-7">
+                        <div class="card">
+                            <!-- Tab panes -->
+                            <div class="card-body">
+                                <form class="form-horizontal form-material mx-2" method="post">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label class="col-md-12">First Name</label>
+                                        <div class="col-md-12">
+                                            <input type="text" placeholder="{{firstname}}"
+                                                class="form-control form-control-line" name="firstname">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-12">Last Name</label>
+                                        <div class="col-md-12">
+                                            <input type="text" placeholder="{{lastname}}"
+                                                class="form-control form-control-line" name="lastname">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="col-md-12">Username</label>
+                                        <div class="col-md-12">
+                                            <input type="text" placeholder="{{username}}"
+                                                class="form-control form-control-line" name="username">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="example-email" class="col-md-12">Email</label>
+                                        <div class="col-md-12">
+                                            <input type="email" placeholder="{{email}}"
+                                                class="form-control form-control-line" name="email"
+                                                id="example-email">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-12">Password</label>
+                                        <div class="col-md-12">
+                                            <input type="password" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;" 
+                                                class="form-control form-control-line" name="password">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <button class="btn btn-primary" type="submit" id="Update_info">Update inforamtion</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                    
+            </div>
+            <!-- ============================================================== -->
+                <!-- End Page Content -->
+                <!-- ============================================================== -->
+{% else %}
+<div class="row align-items-center justify-content-center">
+    <h1>You must be logged in to accses this page !</h1>
+</div>
+<div class="row align-items-center justify-content-center">
+    <h1><a href="{% url 'enSentiment:home' %}"> GO TO HOME</a></h1>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block endScript %}
+{% if not user.is_authenticated %}
+    <script>
+        $('#SigninModal').modal('show');
+    </script>
+{% endif %}
+{% endblock endScript %}

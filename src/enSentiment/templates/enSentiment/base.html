@@ -1,0 +1,319 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords"
+        content="wrappixel, admin dashboard, html css dashboard, web dashboard, bootstrap 5 admin, bootstrap 5, css3 dashboard, bootstrap 5 dashboard, AdminWrap lite admin bootstrap 5 dashboard, frontend, responsive bootstrap 5 admin template, AdminWrap lite design, AdminWrap lite dashboard bootstrap 5 dashboard template">
+    <meta name="description"
+        content="Machine learning based sentiment analysis web appliction">
+    <meta name="robots" content="noindex,nofollow">
+    <title>MLSA</title>
+
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static '/assets/images/First-MLSAlogo.png' %}">
+    
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+
+    <!-- Local css File (Added by Fawzan)-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css"> <!-- Select a vac -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"> <!-- For icons such as calendar -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}"> <!-- For Date picker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script> <!-- For Date picker -->
+
+    <!-- For mulitipale scripts on html files -->
+    {% block initscripts %}
+    {% endblock %}
+
+    <!-- Custom CSS -->
+    <link href="{% static 'css/style.css' %}?6"  rel="stylesheet"> <!-- For page Structure -->
+    <!-- Page CSS -->
+    <link href="{% static 'css/colors/default.css' %}" id="theme" rel="stylesheet"> <!-- For coloring -->
+</head>
+
+<body class="fix-sidebar fix-header">
+    
+    <div class="preloader">
+        <div class="loader">
+            <div class="loader__figure"></div>
+            <p class="loader__label">Loading...</p>
+        </div>
+    </div>
+
+    <header class="topbar">
+        <nav class="navbar top-navbar navbar-expand-md navbar-light">
+            
+            <!-- ============================================================== -->
+            <!-- Logo -->
+            <!-- ============================================================== -->
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/./">
+                    <!-- Logo icon --><b>
+                        <img src="{% static '/assets/images/First-MLSAlogo.png' %}" style="width: 45px; height: 50px;" alt="homepage" class="dark-logo" />
+                    </b>
+                    <!--End Logo icon -->
+                    <!-- Logo text --><span>
+                        <img src="{% static '/assets/images/MLSA_on_COVID_Reviewslogo_text.png' %}" alt="" class="dark-logo" />
+                        </span>
+                        
+                </a>
+
+            </div>
+            
+            <ul class="navbar-nav me-auto">
+              <li class="nav-item"> <a class="nav-link nav-toggler hidden-md-up waves-effect waves-dark"
+                      href="javascript:void(0)"><i class="fa fa-bars"></i></a> </li>
+          </ul>
+          <div class="col text-left">
+          <h3 class="ml-3 mt-2 d-none d-lg-block d-xl-block">THE POWER OF PEPOLE'S  SENTIMENT IS IN YOUR HANDS!</h3> 
+          </div>
+          <!-- if user is logged in the logout button is appeare else the signup and signin buttons will appeare -->
+            {% if user.is_authenticated %}
+            <a href="/logout"><button type="button" class="btn btn-primary ml-auto mr-3">
+                Logout
+                </button></a>
+            {% else %}   
+            <button type="button" class="btn btn-primary ml-auto mr-3" data-toggle="modal" data-target="#SigninModal">
+                Sign in
+                </button>
+
+            <button type="button" class="btn btn-primary mr-3" data-toggle="modal" data-target="#SignupModal">
+                Sign up
+                </button>    
+            {% endif %}     
+        </nav>
+    </header>
+
+    <div id="main-wrapper">
+        <aside class="left-sidebar">
+            <!-- Sidebar scroll-->
+            <div class="scroll-sidebar">
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav">
+                    <ul id="sidebarnav">
+                        <li> <a class="waves-effect waves-dark" href="/./" aria-expanded="false"><i
+                                    class="fa fa-code-fork"></i><span class="hide-menu">Analyze</span></a>
+                        </li>
+
+                        <li> <a class="waves-effect waves-dark" href="/myresults" aria-expanded="false"><i
+                            class="fa fa-list-alt"></i><span class="hide-menu">My Results</span></a>
+                        </li>
+
+                        <li> <a class="waves-effect waves-dark" href="/profile" aria-expanded="false"><i
+                                    class="fa fa-user-circle-o"></i><span class="hide-menu">Profile</span></a>
+                        </li>
+                        <li> <a id="settingsBTN" class="waves-effect waves-dark" href="/aboutus" aria-expanded="false"><i
+                            class="fa fa-info-circle"></i><span class="hide-menu">About us</span></a>
+                        </li>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+        </aside>
+
+        <div class="page-wrapper" style="background: url('https://c.neh.tw/thumb/f/720/comrawpixel2354202.jpg') no-repeat center center fixed; background-size: cover;">
+            <!-- ============================================================== -->
+            <!-- Container fluid  -->
+            <!-- ============================================================== -->
+            <div class="container-fluid">
+              <!-- Div for alert messages from views if success or error  -->
+              <div>
+                {% if messages %}
+                    {% for message in messages %}
+                      {% if message.tags == "error"%}
+                      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                      </strong> {{ message }}</strong>
+                      {% else %}
+                      <div class="alert alert-success alert-dismissible fade show" role="alert">
+                          <strong> {{ message }} </strong>
+                      {% endif %}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <!-- This jinja code for all html contents be here -->
+            {% block content %}
+            {% endblock %}
+                                      <!-- Sign in Modal -->
+                                      <div class="modal fade" id="SigninModal">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                      
+                                        <!-- Modal Header -->
+                                        <div class="modal-header">
+                                          <h4 class="modal-title">Sign in</h4>
+                                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        </div>
+              
+                                        <!-- Modal body -->
+                                        <div class="modal-body">
+                                        <form method="post" action="/login">
+                                              {%  csrf_token  %}
+                                              <div class="form-group">
+                                                <label for="register_username" class="col-form-label">Username</label>
+                                                <input type="text" name="login_username" id="re_username" class="form-control">
+                                              </div>
+              
+              
+                                              <div class="form-group">
+                                                <label for="register_password" class="col-form-label">Password</label>
+                                                <input type="password" name="login_password" id="si_password" class="form-control">
+                                              </div>
+                                            
+                                                <div class="col text-center">
+                                                    <button class="btn btn-primary mt-2" type="submit">Sign in</button>
+                                                </div>
+                                        </form>.
+                                        </div>
+                      
+                                        <!-- Modal footer -->
+                                        <div class="modal-footer">
+                                            <h5>Don't have an Account?</h5>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal" data-toggle="modal" data-target="#SignupModal">Sign up</button>
+                                        </div>
+                      
+                                        </div>
+                                        </div>
+                                        </div>  
+              
+              
+                                      <!-- Sign up Modal -->
+                                        <div class="modal fade" id="SignupModal">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                      
+                                        <!-- Modal Header -->
+                                        <div class="modal-header">
+                                          <h4 class="modal-title">Create an Account</h4>
+                                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                          </div>
+              
+                                        <!--  body -->
+                                        <div class="modal-body">
+                                        <form  action="/register" method="post">
+                                            {%  csrf_token  %}
+                                            <div class="form-group">
+                                              <label for="register_firstname" class="col-form-label">First Name</label>
+                                              <input type="text" name="register_firstname" id="re_firstname" class="form-control">
+                                            </div>
+
+                                            <div class="form-group">
+                                              <label for="register_lastname" class="col-form-label">Last Name</label>
+                                              <input type="text" name="register_lastname" id="re_lastname" class="form-control">
+                                            </div>
+
+                                            <div class="form-group">
+                                              <label for="first_name" class="col-form-label">Username</label>
+                                              <input type="text" name="register_username" id="re_username" class="form-control">
+                                            </div>
+              
+                                            <div class="form-group">
+                                              <label for="first_name" class="col-form-label">Email</label>
+                                              <input type="email" name="register_email" id="re_email" class="form-control">
+                                            </div>
+              
+                                            <div class="form-group">
+                                              <label for="first_name" class="col-form-label">Password</label>
+                                              <input type="password" name="register_password" id="re_password" class="form-control">
+                                            </div> 
+
+                                            <div class="form-group">
+                                              <label for="first_name" class="col-form-label">Confirm Password</label>
+                                              <input type="password" name="register_confpassowrd" id="re_conpassword" class="form-control" required data-error="Please enter message.">
+                                            </div> 
+                                              
+                                              <div class="col text-center">
+                                                <button class="btn btn-primary mt-2" type="submit">Sign up</button>
+                                              </div>
+                                        </form>.
+                                        </div>
+                      
+                                        <!-- Modal footer -->
+                                        <div class="modal-footer">
+                                        <h5>Have an Account?</h5>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal" data-toggle="modal" data-target="#SigninModal">Sign in</button>
+                                        </div>
+                      
+                                        </div>
+                                        </div>
+                                        </div>   
+
+            <!-- ============================================================== -->
+            <!-- End Container fluid  -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- footer -->
+            <!-- ============================================================== -->
+            <footer class="footer"> © 2022 MLSA Saad Riyad Fawzan </footer>
+            <!-- ============================================================== -->
+            <!-- End footer -->
+            <!-- ============================================================== -->
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Page wrapper  -->
+        <!-- ============================================================== -->
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- All Jquery -->
+    <!-- ============================================================== -->
+    <script src="{% static '/assets/node_modules/jquery/jquery.min.js' %}"></script>
+    
+    <!--Custom JavaScript -->
+    <script src="{% static 'js/custom.min.js' %}"></script> <!-- for loading & preloading pages-->
+
+    
+    <!-- local js files (Added by Fawzan) -->
+    <script src="{% static 'js/bootstrap.bundle.js' %}"></script> <!-- For Select a vac -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script> <!-- For Select a vac -->
+    
+
+    <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script> <!-- For Date picker -->
+    <script src="{% static 'js/bootstrap-validate.js' %}"></script>
+
+    <!-- To validate if there is an error if yes then the button will be disabeld and not clickabel -->
+    <script>
+      $('form').change(function(){
+          if ($('form input').hasClass('form-control is-invalid'))
+          {
+              $('form button').prop('disabled', true);
+          }
+          else{
+              $('form button').prop('disabled', false);
+          }
+        });
+    </script>
+    <script>
+          // SignUp Form Validation
+          bootstrapValidate(['#re_firstname','#re_lastname'], 'regex:^[a-zA-Z][a-zA-Z]{0,}$:Username should contain only alphabetical character!|min:4:Enter at least 4 characters!');
+          bootstrapValidate('#re_username', 'regex:^[a-zA-Z][a-zA-Z0-9_]{0,}$:Username should start with alphabetical character!|min:3:Enter at least 3 characters!');
+          bootstrapValidate('#re_email', 'email:Enter a valid email!');
+          bootstrapValidate('#re_password', 'regex:^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$:Enter at least 8 character with one  CAP character!');
+          bootstrapValidate('#re_conpassword', 'matches:#re_password:Does not match!');
+
+          // LogIN Form Validation
+          bootstrapValidate('#si_password', 'regex:^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$:Enter at least 8 character with one  CAP character!');
+
+    </script>
+
+    <!-- For mulitipale scripts on html files  after html is ready-->
+    {% block endScript %}
+    {% endblock %}
+                
+                
+    
+</body>
+
+</html>

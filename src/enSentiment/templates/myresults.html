@@ -1,0 +1,76 @@
+{% extends 'enSentiment/base.html' %}
+{% load static %}
+
+
+
+{% block content %}
+{% if user.is_authenticated %}
+                <div class="row justify-content-center">
+                
+                    <!-- Column of My results tweets -->
+                    <div class="col-lg-6 d-flex align-items-stretch">
+                        <div class="card w-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-center">
+                                    <div>
+                                        <h5 class="card-title"><strong>My Results</strong></h5>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table vm no-th-brd pro-of-month">
+                                        <thead>
+                                            <tr>
+                                                <th>Result Keyword</th>
+                                                <th>Result Date</th>
+                                                <th>See Analysis</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                    <!-- if there a results in database will wirte resutl else no previous result messeage will appeare -->
+                                    {% if results %}
+                                        {% for  row in results %}
+                                            <tr>
+                                                <td >
+                                                    <h6><strong>{{row.Keyword}} Of ({{row.NumberOftweets}}) Tweets</strong></h6>
+                                                    <small class="text-muted"><strong>{{row.FromDate}} - {{row.ToDate}}</strong></small>
+                                                </td>
+                                                <td>{{row.resutlDate}}</td>
+                                                <td> 
+                                                    <a href="{% url 'enSentiment:result' row.id %}"><button class="btn btn-primary ml-auto mr-1">
+                                                        Analysis
+                                                    </button></a>
+                                                    <a href="{% url 'enSentiment:del_result' row.id %}"><i class="fa fa-trash-o"></i></a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else%}
+                                    <tr>
+                                        <td>
+                                       <h4>NO PREVIOUS RESUTLS...</h4>
+                                    </td>
+                                   </tr>
+                                    {% endif %}
+                                    
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+{% else %}
+<div class="row align-items-center justify-content-center">
+    <h1>You must be logged in to accses this page !</h1>
+</div>
+<div class="row align-items-center justify-content-center">
+    <h1><a href="{% url 'enSentiment:home' %}"> GO TO HOME</a></h1>
+</div>
+{% endif %}                
+{% endblock %}
+
+{% block endScript %}
+{% if not user.is_authenticated %}
+    <script>
+        $('#SigninModal').modal('show');
+    </script>
+{% endif %}
+{% endblock endScript %}

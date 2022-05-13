@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords"
+        content="wrappixel, admin dashboard, html css dashboard, web dashboard, bootstrap 5 admin, bootstrap 5, css3 dashboard, bootstrap 5 dashboard, AdminWrap lite admin bootstrap 5 dashboard, frontend, responsive bootstrap 5 admin template, AdminWrap lite design, AdminWrap lite dashboard bootstrap 5 dashboard template">
+    <meta name="description"
+        content="Machine learning based sentiment analysis web appliction">
+    <meta name="robots" content="noindex,nofollow">
+    <title>MLSA</title>
+
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static '/assets/images/First-MLSAlogo.png' %}">
+    
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+
+    <!-- Local css File (Added by Fawzan)-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css"> <!-- Select a vac -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"> <!-- For icons such as calendar -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}"> <!-- For Date picker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script> <!-- For Date picker -->
+
+    <!-- Custom CSS -->
+    <link href="{% static 'css/style.css' %}?6"  rel="stylesheet"> <!-- For page Structure -->
+    <!-- Page CSS -->
+    <link href="{% static 'css/colors/default.css' %}" id="theme" rel="stylesheet"> <!-- For coloring -->
+</head>
+
+<body class="">
+
+
+                
+                <div class="row align-items-center justify-content-center" >
+                    <div class="card text-center">
+                        <div class="card-body">
+                          <h5 class="card-title"><b>
+                            <img src="https://mlsa.cloud/static/assets/images/First-MLSAlogo.png" style="width: 45px; height: 50px;" alt="homepage" class="dark-logo" />
+                            </b>
+                            <span>
+                            <img src="mlsa.cloud/static/assets/images/MLSA_on_COVID_Reviewslogo_text.png" alt="" class="dark-logo" />
+                            </span></h5> <hr>
+                          <h2 class="card-text">Hey<strong> {{user.first_name}},</strong></h2>
+                          <h3> We are glad you are using our sentiment analyzer.<br><br>We'd like to let you know that the analysis result you requested for {{num_allTweets}} Tweets is ready, <br> and you can view it on the My Results page.</h3>
+                          <a href="localhost:8000/myresults" class="btn btn-primary">Go to My result</a>
+                            <h3>Thank you for trusting us, and we hope you like our website.</h3>
+                        </div>
+                        <hr>
+                        <div class="card-footer text-muted">
+                            © 2022 MLSA Saad Riyad Fawzan
+                        </div>
+                      </div>
+                   
+                </div>
+
+
+
+</body>
+
+</html>
