@@ -66,9 +66,9 @@ Our website has the following features:
         
    * [manage.py](./src/manage.py)
    
- * [env](./README.md)
-   * [nltk_data](./nltk_data)
-   * [Lib](./Lib)
+ * [env](./env)
+   * [nltk_data](./env/nltk_data)
+   * [Lib](./env/Lib)
    
    
  * [README.md](./README.md)
@@ -141,4 +141,3 @@ smsbinonayq@sm.imamu.edu.sa
 fkfalotaibe@sm.imamu.edu.sa
 
 Github repository: https://github.com/Saad-BinMansour/MLSA-on-Reviews-of-COVID19-vaccines.git
->>>>>>> master
